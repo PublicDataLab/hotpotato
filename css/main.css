@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+body {
+  overflow: hidden;
+  height: 100vh;
+}
+.article h2 img {
+  max-width: 20px;
+}
+.article h3 img,
+.article h2 img,
+.article h4 img {
+  max-width: 20px;
+}
+.arrow2 {
+  stroke-width: 2;
+  stroke: #000;
+}
+#arrow {
+  stroke-width: 1;
+  stroke-dasharray: 0;
+  fill: #f00;
+}
+#description {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-color: #EFEFEF;
+}

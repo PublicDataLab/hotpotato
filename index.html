@@ -1,0 +1,161 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+                padding-top: 50px;
+                padding-bottom: 20px;
+            }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    </head>
+    <body>
+
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Hot potato</a>
+        </div>
+
+      </div>
+    </nav>
+
+
+
+    <div class="container-fluid">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-9" id="elements">
+            <svg id="canvas">
+                <defs>
+                    <filter id="sepiatone">
+                      <feColorMatrix type="matrix" values=".343 .669 .119 0 0 .249 .626 .130 0 0 .172 .334 .111 0 0 .000 .000 .000 1 0"/>
+                    </filter>
+
+                    <filter id="blurFilter2" y="-10" height="40" x="-10" width="150">
+                        <feOffset in="SourceAlpha" dx="3" dy="3" result="offset2" />
+                        <feGaussianBlur in="offset2" stdDeviation="3"  result="blur2"/>
+
+                        <feMerge>
+                            <feMergeNode in="blur2" />
+                            <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                    </filter>
+
+                    <marker id="arrow" viewBox="0 -5 10 10" refX="5" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+                        <path d="M0,-5L10,0L0,5" class="arrowHead"></path>
+                    </marker>
+
+                </defs>
+            </svg>
+        </div>
+        <div class="col-md-3" id="description">
+            <div id="description-inner">
+                <div class="article">
+                    <div class="row">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <h2>
+                                <img src="img/activist2.png"/> Activists
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-1 col-xs-offset-1">
+                            <div class="arrow" data-color="#990000"> </div>
+                        </div>
+                        <div "col-xs-9">
+                            text describing action.
+                            <br/>
+                            more text blab blabh blahbs
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-10 col-xs-offset-1">
+                            <h3>
+                                <img src="img/activist2.png"/> Government
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div
+       </div>
+      </div>
+
+      <hr>
+
+      <footer>
+
+      </footer>
+      <script id="article-template" type="text/x-handlebars-template">
+          <div class="article">
+              <div class="row">
+                  <div class="col-xs-10 col-xs-offset-1">
+                  <h3 >
+                      <img src="img/{{src_image}}" class="src-icon-image"/> {{src_title}}
+                  </h3>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="col-xs-1 col-xs-offset-1">
+                      <!--<div class="arrow" data-color="#990000"> </div>-->
+                      <svg width="9px" height="144px" viewBox="0 0 9 144" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\
+                          <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->\
+                          <title>Group</title>\
+                          <defs></defs>\
+                          <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\
+                              <g id="Group">\
+                                  <path d="M4.5,0.5 L4.5,135.592561" id="Line" stroke="{{colorArrow}}" stroke-linecap="square"></path>\
+                                  <polygon id="Triangle" fill="{{colorArrow}}" transform="translate(4.500000, 137.500000) rotate(180.000000) translate(-4.500000, -137.500000) " points="4.5 131 9 144 0 144"></polygon>\
+                              </g>\
+                          </g>\
+                      </svg>
+                  </div>
+                  <div "col-xs-9">
+                     {{{body}}}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-xs-10 col-xs-offset-1">
+                      <h4>
+                          <img src="img/{{dst_image}}" class="dst-icon-image"/> {{dst_title}}
+                      </h4>
+                </div>
+              </div>
+          </div>
+     </div>
+    </script>
+    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+
+        <script src="js/main.js"></script>
+        <script src="http://localhost:35729/livereload.js"> </script>
+
+    </body>
+</html>
