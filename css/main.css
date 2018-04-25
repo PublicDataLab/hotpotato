@@ -13,9 +13,16 @@ body {
 .article h4 img {
   max-width: 20px;
 }
+.article img.dst-icon-image,
+.article img.src-icon-image {
+  max-width: 20px;
+}
 .arrow2 {
   stroke-width: 2;
   stroke: #000;
+}
+.arrow2 .mouseover {
+  stroke: #f00!important;
 }
 #arrow {
   stroke-width: 1;
@@ -27,4 +34,14 @@ body {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: #EFEFEF;
+}
+svg text {
+  user-select: none;
+  /* CSS3 (little to no support) */
+  -ms-user-select: none;
+  /* IE 10+ */
+  -moz-user-select: none;
+  /* Gecko (Firefox) */
+  -webkit-user-select: none;
+  /* Webkit (Safari, Chrome) */
 }
