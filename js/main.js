@@ -44,10 +44,10 @@ window.onload = function() {
 
     replaceArrow();
 
-    d3.dsv("\t", "carsdata.tsv", function(d) {
+    d3.dsv("\t", "carsdata.tsv", function(d,i) {
 
          return {
-
+             id:i,
            Action:  d.Action, // convert "Year" column to Date
            Action2: d.Action2,
            slugPow: string2Slug(d.POW),
@@ -95,7 +95,7 @@ function drawArrowFromTo(originNode){
         if(targetNode==undefined)return;
         if(targetNodeSlug==originNode.slug) return
         var color=colores( datarow.Topic.length %20)
-        canvasInsertArrow(originNode.x+40+i*2,originNode.y+40+i*2, targetNode.x+40+i*2 , targetNode.y+40+i*2 , color,originNode.slug)
+        canvasInsertArrow(originNode.x+40+i*2,originNode.y+40+i*2, targetNode.x+40+i*2 , targetNode.y+40+i*2 , color,originNode.slug, datarow.id)
         i++;
     //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
@@ -166,7 +166,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                 d.status="clicked"
                 $(this).parent().attr( "filter","url(#sepiatone)")
                 // add articles
-                insertArticle("tirri <br/> tirrii 2" ,d.data[0], "otro", d.data[1], d.data[1])
+                //insertArticle("tirri <br/> tirrii 2" ,d.data[0], "otro", d.data[1], d.data[1])
                 //draw links
                 //console.log(event.altKey)
                 /*if(links[d.id]!=undefined){
@@ -183,8 +183,20 @@ function createCircle(_svg1,radius_w,radius_h,files){
         })
         .on("mouseover", function(d, i) {
             var num=$(this).attr("data-id")
+            //add article
+            //TODO estoy metiendo los articulos al hacer mouseover
+            if(dataByPow[d.slug]==undefined) return;
+            dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
+                //insertArticle(text, title1, title2, icon1, icon2,class){
+                //console.log(datarow)
+                if(datarow.slugPow==datarow.slugResponsible)
+                {
+                    console.log("insert article " + datarow.slugPow )
+                    insertArticle(datarow.Action ,datarow.POW, datarow.POW, d.data[1], d.data[1],"mouseover")
+                }
+            //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
+            })
 
-            console.log($(this).attr( "filter") )
             if(d.status=="normal"){
                 d.status="mouseover"
                 $(this).attr( "filter","url(#blurFilter2)")
@@ -192,12 +204,13 @@ function createCircle(_svg1,radius_w,radius_h,files){
         })
         .on("mouseout", function(d, i) {
             var num=$(this).attr("data-id")
-            console.log(files_clockwise[num])
+            //<console.log(files_clockwise[num])
                 if(d.status=="mouseover"){
                     d.status="normal"
                     $(this).attr( "filter","")
                     $(this).attr("data-status","")
                 }
+                d3.selectAll(".article.mouseover").remove()
         })
 
         g_enter.append("text")
@@ -214,9 +227,10 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
 }
 
-function canvasInsertArrow(x1,y1,x2,y2,color,id){
+function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber){
     svg_canvas.append('line')
-    .attr('class',()=>  'arrow2 arrow-'+id)
+    .attr('class',()=>  'arrow2 arrow-'+id )
+    .attr("data-number",datanumber)
     .attr('marker-end',"url(#arrow)")
     .attr('x1',x1)
     .attr('y1',y1)
@@ -225,6 +239,14 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id){
     .style("stroke",color)
     .on("click", function(d, i) {
         console.log("clickArrow")
+        var num = d3.select(this).attr("data-number");
+        datarow=globalData[num]
+        var icon1=nodesBySlug[datarow.slugPow].data[1]
+        console.log(icon1)
+        var icon2=nodesBySlug[datarow.slugResponsible].data[1]
+        console.log(icon2)
+        insertArticle(datarow.Action ,datarow.POW, datarow.Responsible, icon1,icon2,"clicked")
+
     })
     .on("mouseover", function(d, i) {
         console.log( $(this) )
@@ -257,8 +279,8 @@ function insertArrow(h,color){
     </svg>'
 }
 
-function insertArticle(text,title1, title2, icon1, icon2){
-    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#ff0000" };
+function insertArticle(text,title1, title2, icon1, icon2, extraclass){
+    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#ff0000","extraclass":extraclass };
     var html    = template(context);
     $('#description').append(html)
 
