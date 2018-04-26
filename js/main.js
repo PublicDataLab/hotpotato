@@ -3,8 +3,9 @@ offset=90;
 svg_canvas=undefined;
 template=undefined
 IMAGE_SIZE=80;
-CIRCLE_CUT_WIDTH=80;
+CIRCLE_CUT_WIDTH=120;
 CIRCLE_CUT_HEIGHT=200
+DEBUG=false;
 topics=[]
 files_clockwise=[
     ["devolvedgovernment","mayor2.png"],
@@ -44,7 +45,7 @@ window.onload = function() {
 
     replaceArrow();
 
-    d3.dsv("\t", "carsdata.tsv", function(d,i) {
+    d3.dsv(",", "carsdata.csv", function(d,i) {
 
          return {
              id:i,
@@ -95,7 +96,7 @@ function drawArrowFromTo(originNode){
         if(targetNode==undefined)return;
         if(targetNodeSlug==originNode.slug) return
         var color=colores( datarow.Topic.length %20)
-        canvasInsertArrow(originNode.x+40+i*2,originNode.y+40+i*2, targetNode.x+40+i*2 , targetNode.y+40+i*2 , color,originNode.slug, datarow.id)
+        canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.id)
         i++;
     //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
@@ -108,6 +109,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
     var j=0;
     var degrees_seperation= 360/(num_elements );
     svg_canvas=_svg1
+    svg_g= _svg1.append("g").attr("transform", function(d){ return "translate (" + 80 + "," + 80 + ")" })
+
     nodes=[]
     files.forEach(function (el){
         var degrees=degrees_seperation*j
@@ -116,6 +119,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
             data:files_clockwise[j],
             x: radius_w+radius_w * Math.cos( (degrees-offset) ),
             y: radius_h+radius_h * Math.sin( (degrees-offset) ),
+            x_inside:   radius_w+(radius_w-80) * Math.cos( (degrees-offset) ),
+            y_inside:   radius_h+(radius_h-80) * Math.sin( (degrees-offset) ),
             status: "normal",
             id:j
         })
@@ -126,23 +131,47 @@ function createCircle(_svg1,radius_w,radius_h,files){
         nodesBySlug[d.slug]=d
     })
 
+    var g_enter= svg_g.selectAll('g.nodeotro')
+      .data(nodes)
+      .enter()
+      .append("g")
+      .attr("fill","#ff0000")
+      .attr('class',"nodeotro")
+      .attr("align-baseline","middle")
 
+      .attr("transform", function(d){ return "translate (" + d.x_inside + "," + d.y_inside + ")" })
 
-    var g_enter= _svg1.selectAll('g.node')
+        //.attr('x',function(d){return d.x} )
+        //.attr('y',function(d){return d.y}  )
+    if(DEBUG){
+        g_enter.append("circle")
+    .attr('cx',0)
+    .attr('cy',0)
+    .attr('r',4)
+    .attr('fill',"#0f0")
+    }
+
+    var g_enter= svg_g.selectAll('g.node')
       .data(nodes)
       .enter()
       .append("g")
       .attr("fill","#ff0000")
       .attr('class',"node")
+      .attr("align-baseline","middle")
+
       .attr("transform", function(d){ return "translate (" + d.x + "," + d.y + ")" })
 
         //.attr('x',function(d){return d.x} )
         //.attr('y',function(d){return d.y}  )
+
     g_enter.append("image")
         .attr('xlink:href',function(d){return'img/'+d.data[1]})
         .attr('width',IMAGE_SIZE+'px')
         .attr('height',IMAGE_SIZE+'px')
+        .attr('y',-IMAGE_SIZE/2+'px')
+        .attr('x',-IMAGE_SIZE/2+'px')
         .attr("data-id",j)
+
         .on("click", function(d, i) {
             var num=$(this).attr("data-id")
             event.stopPropagation();
@@ -215,36 +244,59 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
         g_enter.append("text")
         .attr("x", function(d) { return d.cx; })
-        .attr("y", function(d) { return "90px"; })
+        .attr("y", function(d) { return "50px"; })
         .text( function (d) { return  d.data[0]  } )
         .attr("font-family", "sans-serif")
-        .attr("text-anchor", "start")
+        .attr("text-anchor", "middle")
         .attr("font-size", "12px")
         .attr("fill", "black");
-
+        if(DEBUG){
+        g_enter.append("circle")
+        .attr('cx',0)
+        .attr('cy',0)
+        .attr('r',4)
+        .attr('fill',"#f00")
+        }
 
     //canvasInsertArrow(100,100,150,250,"#ff00ff")
 
 }
 
 function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber){
-    svg_canvas.append('line')
+    var lineGenerator = d3.line();
+    //lineGenerator.curve(d3.curveCatmullRom.alpha(0.5));
+    lineGenerator.curve(d3.curveNatural)
+    console.log(lineGenerator( [ [x1,y1],[x2,y2] ,[x2+100,y2+100] ] ));
+    svg_g.append('path')
     .attr('class',()=>  'arrow2 arrow-'+id )
     .attr("data-number",datanumber)
     .attr('marker-end',"url(#arrow)")
-    .attr('x1',x1)
+    .attr('pointer-events',"visibleStroke")
+    .attr("d", function(d) {
+        var ctrlPoint1=Math.round((Math.random()*1000+2))
+        var ctrlPoint2=Math.round((Math.random()*1000+2))
+        var ctrlPoint3=Math.round((Math.random()*1000+2))
+        var ctrlPointY= y1+Math.abs(y2-y1)/2
+        var ctrlPointX= x1+Math.abs(x2-x1)/2
+        //return "M" + x1 + "," + y1 + " C " + x1 + ctrlPoint1 + "," + y1 + " " + x1 + ctrlPoint2 + "," + y2 + ctrlPoint3 + " " + x2 + "," + y2;
+        aaa= "M" + x1 + " " + y1 + " q " + (ctrlPointX-x1) +" "  + (ctrlPointY-y1) +" "  + (x2-x1) +" " + (y2-y1)
+//console.log(aaa)
+        return lineGenerator( [ [x1,y1],  [Math.round(Math.random()*80-40) + Math.abs(x1+x2)/2 , Math.round(Math.random()*80-40) + Math.abs(y1+y2)/2], [x2,y2] ] )
+    })
+    /*.attr('x1',x1)
     .attr('y1',y1)
     .attr('x2',x2)
-    .attr('y2',y2)
+    .attr('y2',y2)*/
     .style("stroke",color)
     .on("click", function(d, i) {
         console.log("clickArrow")
         var num = d3.select(this).attr("data-number");
         datarow=globalData[num]
         var icon1=nodesBySlug[datarow.slugPow].data[1]
-        console.log(icon1)
+        //console.log(icon1)
         var icon2=nodesBySlug[datarow.slugResponsible].data[1]
-        console.log(icon2)
+        //console.log(icon2)
+        d3.selectAll(".article.clicked").remove()
         insertArticle(datarow.Action ,datarow.POW, datarow.Responsible, icon1,icon2,"clicked")
 
     })
@@ -280,7 +332,7 @@ function insertArrow(h,color){
 }
 
 function insertArticle(text,title1, title2, icon1, icon2, extraclass){
-    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#ff0000","extraclass":extraclass };
+    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","extraclass":extraclass };
     var html    = template(context);
     $('#description').append(html)
 
