@@ -68,9 +68,56 @@ window.onload = function() {
              .key(function(d) { return d.Topic; } )
              .object(data);
              topics=Object.keys(dataByTopic)
+             topicsData=[]
+             for(var i=0; i<topics.length; i++){
+                 topics[i]=topics[i].split(';')[0]
+                topicsData.push([topics[i],true])
+             }
+             buildFilters(topicsData);
        })
-
+    $("#selectAll").on("click",function(event){
+            for(var i=0; i<topicsData.length;i++){
+                topicsData[i][1]=true
+                $(".filter.btn").addClass("selected")
+            }
+    })
+    $("#selectNone").on("click",function(event){
+            for(var i=0; i<topicsData.length;i++){
+                topicsData[i][1]=false
+                $(".filter.btn").removeClass("selected")
+            }
+    })
 } //end onload
+
+function buildFilters(_topics){
+    var filterContainer=d3.selectAll("#filters")
+    var filterstopics= filterContainer.selectAll('a.filter.btn')
+      .data(_topics)
+      .enter()
+      .append("a")
+      .attr("class", "filter btn selected")
+      .html(function(d){return d[0]})
+      .on("click", function(d, i) {
+          console.log("asd" + d)
+          if( d3.select(this).classed("selected")==true){
+              d3.select(this).classed("selected",false)
+              d[1]=false
+          }
+          else{
+              d3.select(this).classed("selected",true)
+               d[1]=true
+          }
+      })
+}
+function checkInFilters(s){
+    for(var i=0; i<topicsData.length;i++){
+        filter=topicsData[i]
+            if(filter[1]==true){
+                if(s.indexOf(filter[0]) != -1)  return true;
+            }
+    }
+    return false;
+}
 
 function string2Slug(s){
     if(s==undefined) return ""
@@ -96,6 +143,7 @@ function drawArrowFromTo(originNode){
         if(targetNode==undefined)return;
         if(targetNodeSlug==originNode.slug) return
         var color=colores( datarow.Topic.length %20)
+        if(checkInFilters( datarow.Topic) )
         canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.id)
         i++;
     //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
@@ -214,6 +262,13 @@ function createCircle(_svg1,radius_w,radius_h,files){
             var num=$(this).attr("data-id")
             //add article
             //TODO estoy metiendo los articulos al hacer mouseover
+            console.log(d)
+
+            if(d.status=="normal"){
+                d.status="mouseover"
+                $(this).attr( "filter","url(#blurFilter2)")
+            }
+
             if(dataByPow[d.slug]==undefined) return;
             dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
                 //insertArticle(text, title1, title2, icon1, icon2,class){
@@ -225,11 +280,6 @@ function createCircle(_svg1,radius_w,radius_h,files){
                 }
             //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
             })
-
-            if(d.status=="normal"){
-                d.status="mouseover"
-                $(this).attr( "filter","url(#blurFilter2)")
-            }
         })
         .on("mouseout", function(d, i) {
             var num=$(this).attr("data-id")
