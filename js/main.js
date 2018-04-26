@@ -43,7 +43,7 @@ window.onload = function() {
     svg = d3.select("#canvas");
     createCircle(svg,(w-CIRCLE_CUT_WIDTH*2)/2,(h-CIRCLE_CUT_HEIGHT)/2,files_clockwise)
 
-    replaceArrow();
+
 
     d3.dsv(",", "carsdata.csv", function(d,i) {
 
@@ -51,6 +51,7 @@ window.onload = function() {
              id:i,
            Action:  d.Action, // convert "Year" column to Date
            Action2: d.Action2,
+           pow_original: d.POW_original,
            slugPow: string2Slug(d.POW),
            POW:     d.POW,
            Responsible: d.Responsible,
@@ -64,6 +65,13 @@ window.onload = function() {
            dataByPow=d3.nest()
             .key(function(d) { return d.slugPow; } )
             .object(data);
+            dataByPowByResponsible=d3.nest()
+
+             .key(function(d) { return d.slugPow; } )
+             .key(function(d) { return d.slugResponsible; } )
+             .rollup(function(leaves) { return leaves.length; })
+             .object(data);
+
             dataByTopic=d3.nest()
              .key(function(d) { return d.Topic; } )
              .object(data);
@@ -96,11 +104,13 @@ function buildFilters(_topics){
       .enter()
       .append("a")
       .attr("class", "filter btn selected")
+      .style("background", function(d, i) { console.log(d[0]); return colores( d[0].length %20)} )
       .html(function(d){return d[0]})
       .on("click", function(d, i) {
           console.log("asd" + d)
           if( d3.select(this).classed("selected")==true){
               d3.select(this).classed("selected",false)
+
               d[1]=false
           }
           else{
@@ -132,10 +142,22 @@ function string2Slug(s){
     return s
 }
 
+function buildLinks(){
+    var links=[]
+    globalData.forEach(function(row){
+        links.push({
+           source: nodesBySlug[row.slugPow],
+           target: nodesBySlug[row.slugResponsible],
+           value: 0
+       })
+   });
+}
+
 function drawArrowFromTo(originNode){
     // {Action: "Funding for ULEVs: Plug In Car and Plug In Van Grant Schemes", Action2: "Transition to electric and low-emission vehicles", slugPow: "centralgovernment", POW: "Central Government", Responsible: "Central Government", …}
     if(dataByPow[originNode.slug]==undefined) return;
     var i=0;
+    var countArrow=0;
     dataByPow[originNode.slug].forEach(function(datarow){ //recorro todos los
         //console.log(datarow)
         var targetNodeSlug=datarow.slugResponsible
@@ -144,7 +166,25 @@ function drawArrowFromTo(originNode){
         if(targetNodeSlug==originNode.slug) return
         var color=colores( datarow.Topic.length %20)
         if(checkInFilters( datarow.Topic) )
-        canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.id)
+            countArrow++;
+    });
+     counter_target={}
+    dataByPow[originNode.slug].forEach(function(datarow){ //recorro todos los
+        //console.log(datarow)
+        var targetNodeSlug=datarow.slugResponsible
+        var targetNode=nodesBySlug[targetNodeSlug]
+        if(targetNode==undefined)return;
+        if(targetNodeSlug==originNode.slug) return
+        var color=colores( datarow.Topic.length %20)
+    //    console.log(originNode.slug)
+    //    console.log(datarow.slugResponsible)
+        var totalElements=dataByPowByResponsible[originNode.slug][datarow.slugResponsible]
+        if(counter_target[datarow.slugResponsible]==undefined) counter_target[datarow.slugResponsible]=1;
+        else counter_target[datarow.slugResponsible] +=1
+        if(checkInFilters( datarow.Topic) )
+        {
+            canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.id,counter_target[datarow.slugResponsible],totalElements)
+        }
         i++;
     //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
@@ -206,13 +246,13 @@ function createCircle(_svg1,radius_w,radius_h,files){
       .attr("fill","#ff0000")
       .attr('class',"node")
       .attr("align-baseline","middle")
-
       .attr("transform", function(d){ return "translate (" + d.x + "," + d.y + ")" })
 
+      g_enter.attr("opacity",0).transition().duration(1000).delay(function(d,i){ return i*100}).attr("opacity",1);
         //.attr('x',function(d){return d.x} )
         //.attr('y',function(d){return d.y}  )
 
-    g_enter.append("image")
+    var imageEnter=g_enter.append("image")
         .attr('xlink:href',function(d){return'img/'+d.data[1]})
         .attr('width',IMAGE_SIZE+'px')
         .attr('height',IMAGE_SIZE+'px')
@@ -220,7 +260,9 @@ function createCircle(_svg1,radius_w,radius_h,files){
         .attr('x',-IMAGE_SIZE/2+'px')
         .attr("data-id",j)
 
-        .on("click", function(d, i) {
+
+
+        imageEnter.on("click", function(d, i) {
             var num=$(this).attr("data-id")
             d3.event.stopPropagation();
             if(d3.event.shiftKey==false){
@@ -312,26 +354,29 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
 }
 
-function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber){
+function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
     var lineGenerator = d3.line();
     //lineGenerator.curve(d3.curveCatmullRom.alpha(0.5));
     lineGenerator.curve(d3.curveNatural)
-    console.log(lineGenerator( [ [x1,y1],[x2,y2] ,[x2+100,y2+100] ] ));
+    //console.log(lineGenerator( [ [x1,y1],[x2,y2] ,[x2+100,y2+100] ] ));
     svg_g.append('path')
     .attr('class',()=>  'arrow2 arrow-'+id )
     .attr("data-number",datanumber)
-    .attr('marker-end',"url(#arrow)")
+    .attr('marker-end',function(d){ if(elementNumber==(total) ) return    "url(#arrow)"})
     .attr('pointer-events',"visibleStroke")
     .attr("d", function(d) {
-        var ctrlPoint1=Math.round((Math.random()*1000+2))
-        var ctrlPoint2=Math.round((Math.random()*1000+2))
-        var ctrlPoint3=Math.round((Math.random()*1000+2))
-        var ctrlPointY= y1+Math.abs(y2-y1)/2
-        var ctrlPointX= x1+Math.abs(x2-x1)/2
+
+         if(y1<y2) ctrlPointY= y1+Math.abs(y2-y1)/2
+         else ctrlPointY= y2+Math.abs(y1-y2)/2
+        if(x1<x2)  ctrlPointX= x1+Math.abs(x2-x1)/2
+        else ctrlPointX= x2+Math.abs(x1-x2)/2
         //return "M" + x1 + "," + y1 + " C " + x1 + ctrlPoint1 + "," + y1 + " " + x1 + ctrlPoint2 + "," + y2 + ctrlPoint3 + " " + x2 + "," + y2;
         aaa= "M" + x1 + " " + y1 + " q " + (ctrlPointX-x1) +" "  + (ctrlPointY-y1) +" "  + (x2-x1) +" " + (y2-y1)
 //console.log(aaa)
-        return lineGenerator( [ [x1,y1],  [Math.round(Math.random()*80-40) + Math.abs(x1+x2)/2 , Math.round(Math.random()*80-40) + Math.abs(y1+y2)/2], [x2,y2] ] )
+    if(y2>y1)
+        return lineGenerator( [ [x1,y1],  [ (elementNumber*14- (total/2) * 14 ) + Math.abs(x1+x2)/2 , ( elementNumber* 14 - (total/2)*14 ) + Math.abs(y1+y2)/2], [x2,y2] ] )
+    else
+        return lineGenerator( [ [x1,y1],  [ -(elementNumber*14- (total/2) * 14 ) + Math.abs(x1+x2)/2 ,  + Math.abs(y1+y2)/2], [x2,y2] ] )
     })
     /*.attr('x1',x1)
     .attr('y1',y1)
@@ -347,7 +392,7 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber){
         var icon2=nodesBySlug[datarow.slugResponsible].data[1]
         //console.log(icon2)
         d3.selectAll(".article.clicked").remove()
-        insertArticle(datarow.Action ,datarow.POW, datarow.Responsible, icon1,icon2,"clicked")
+        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,"clicked")
 
     })
     .on("mouseover", function(d, i) {
@@ -360,7 +405,7 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber){
     })
 }
 
-function replaceArrow(){
+/*function replaceArrow(){
     $(".arrow").each(function(index){
         c=$(this).data("color")
         $(this).append( insertArrow(144,c) )
@@ -379,7 +424,7 @@ function insertArrow(h,color){
             </g>\
         </g>\
     </svg>'
-}
+}*/
 
 function insertArticle(text,title1, title2, icon1, icon2, extraclass){
     var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","extraclass":extraclass };

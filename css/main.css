@@ -67,11 +67,13 @@ svg text {
   display: inline-block;
   color: #333;
   font-size: 9px;
-  background: transparent;
   padding: 3px 6px 3px 6px;
   margin: 4px;
   border: solid #333 1px;
   text-decoration: none;
+}
+.btn.filter:not(.selected) {
+  background: transparent!important;
 }
 .btn.filter.selected {
   background: #333;
