@@ -79,8 +79,14 @@ window.onload = function() {
              topicsData=[]
              for(var i=0; i<topics.length; i++){
                  topics[i]=topics[i].split(';')[0]
-                topicsData.push([topics[i],true])
+                //topicsData.push([topics[i],true])
              }
+              topics = topics.filter(function(elem, index, self) {
+                return index === self.indexOf(elem);
+                })
+                for(var i=0; i<topics.length; i++){
+                   topicsData.push([topics[i],true])
+                }
              buildFilters(topicsData);
        })
     $("#selectAll").on("click",function(event){
