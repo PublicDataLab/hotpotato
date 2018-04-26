@@ -174,8 +174,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
         .on("click", function(d, i) {
             var num=$(this).attr("data-id")
-            event.stopPropagation();
-            if(event.shiftKey==false){
+            d3.event.stopPropagation();
+            if(d3.event.shiftKey==false){
                 _svg1.selectAll(".arrow2").remove();
                 _svg1.selectAll("g.node")
                 .attr( "filter","")
