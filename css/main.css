@@ -88,6 +88,9 @@ svg text {
 #filters {
   background-color: #EFEFEF;
   padding: 6px;
+  position: absolute;
+  bottom: 0px;
+  z-index: 100;
 }
 .btn.filter {
   -webkit-border-radius: 6;

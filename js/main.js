@@ -38,7 +38,7 @@ window.onload = function() {
     h=w_height-50
     colores=d3.scaleOrdinal(d3.schemeCategory20);
     $('#canvas').css('width',w+'px')
-    $('#canvas').css('height',w_height+'px')
+    $('#canvas').css('height',h+'px')
     $('#canvas').css('margin-left',CIRCLE_CUT_WIDTH/2+'px')
     svg = d3.select("#canvas");
     createCircle(svg,(w-CIRCLE_CUT_WIDTH*2)/2,(h-CIRCLE_CUT_HEIGHT)/2,files_clockwise)
