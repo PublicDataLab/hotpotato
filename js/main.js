@@ -201,20 +201,27 @@ function drawArrowFromTo(originNode){
 function createCircle(_svg1,radius_w,radius_h,files){
     var num_elements= files.length;
     var j=0;
-    var degrees_seperation= 360/(num_elements );
+     degrees_seperation= 360/(num_elements );
     svg_canvas=_svg1
     svg_g= _svg1.append("g").attr("transform", function(d){ return "translate (" + 80 + "," + 80 + ")" })
 
     nodes=[]
+
+    polarToCartesian(radius_w , radius_h , radius_w, radius_h, j * degrees_seperation);
+
     files.forEach(function (el){
         var degrees=degrees_seperation*j
         nodes.push({
             slug:files_clockwise[j][0],
             data:files_clockwise[j],
-            x: radius_w+radius_w * Math.cos( (degrees-offset) ),
+            /*x: radius_w+radius_w * Math.cos( (degrees-offset) ),
             y: radius_h+radius_h * Math.sin( (degrees-offset) ),
             x_inside:   radius_w+(radius_w-100) * Math.cos( (degrees-offset) ),
-            y_inside:   radius_h+(radius_h-100) * Math.sin( (degrees-offset) ),
+            y_inside:   radius_h+(radius_h-100) * Math.sin( (degrees-offset) ),*/
+            x: polarToCartesian(radius_w , radius_h , radius_w, radius_h, j * degrees_seperation-offset).x,
+            y:polarToCartesian(radius_w , radius_h , radius_w, radius_h, j * degrees_seperation-offset).y,
+            x_inside:polarToCartesian(radius_w , radius_h , radius_w-100, radius_h-100, j * degrees_seperation-offset).x,
+            y_inside:polarToCartesian(radius_w , radius_h , radius_w-100, radius_h-100, j * degrees_seperation-offset).y,
             status: "normal",
             id:j
         })
@@ -231,18 +238,13 @@ function createCircle(_svg1,radius_w,radius_h,files){
       .append("g")
       .attr("fill","#ff0000")
       .attr('class',"nodeotro")
-      .attr("align-baseline","middle")
-
       .attr("transform", function(d){ return "translate (" + d.x_inside + "," + d.y_inside + ")" })
-
-        //.attr('x',function(d){return d.x} )
-        //.attr('y',function(d){return d.y}  )
     if(DEBUG){
         g_enter.append("circle")
-    .attr('cx',0)
-    .attr('cy',0)
-    .attr('r',4)
-    .attr('fill',"#0f0")
+        .attr('cx',0)
+        .attr('cy',0)
+        .attr('r',4)
+        .attr('fill',"#0f0")
     }
 
     var g_enter= svg_g.selectAll('g.node')
@@ -279,7 +281,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     if(d!=otrosD)
                     otrosD.status="normal"
                 })
-
+                d3.selectAll(".article.clicked").remove()
                 //TODO remove other selections
             }
             if(d.status=="clicked"){
@@ -372,7 +374,16 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
     .attr('class',()=>  'arrow2 arrow-'+id )
     .attr("data-number",datanumber)
     .attr("fill", "none")
-    //.attr('marker-end',function(d){ if(elementNumber==(total) ) return    "url(#arrow)"})
+    .attr('marker-end',function(d){
+        //if(total%2==0){
+        //        if(elementNumber==(total/2 ) ) return    "url(#arrow)"
+        //}
+        //else{
+                if(elementNumber==(Math.floor(total/2)  ) ) return    "url(#arrow)"
+                if(total==1)return    "url(#arrow)"
+        //}
+
+    })
     .attr('pointer-events',"visibleStroke")
     .attr("d", function(d) {
 
@@ -425,27 +436,6 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
     })
 }
 
-/*function replaceArrow(){
-    $(".arrow").each(function(index){
-        c=$(this).data("color")
-        $(this).append( insertArrow(144,c) )
-    })
-}
-
-function insertArrow(h,color){
-    return '<svg width="9px" height="144px" viewBox="0 0 9 144" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\
-        <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->\
-        <title>Group</title>\
-        <defs></defs>\
-        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">\
-            <g id="Group">\
-                <path d="M4.5,0.5 L4.5,135.592561" id="Line" stroke="'+color+'" stroke-linecap="square"></path>\
-                <polygon id="Triangle" fill="'+color+'" transform="translate(4.500000, 137.500000) rotate(180.000000) translate(-4.500000, -137.500000) " points="4.5 131 9 144 0 144"></polygon>\
-            </g>\
-        </g>\
-    </svg>'
-}*/
-
 function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
     var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","link":url,"extraclass":extraclass };
     var html    = template(context);
@@ -455,3 +445,12 @@ function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
 
 
 }
+
+function polarToCartesian(centerX, centerY, radiusX, radiusY, angleInDegrees) {
+
+        var angleInRadians = (angleInDegrees* Math.PI / 180.0);
+        return {
+            x: centerX + (radiusX * Math.cos(angleInRadians)),
+            y: centerY + (radiusY * Math.sin(angleInRadians))
+        };
+    }
