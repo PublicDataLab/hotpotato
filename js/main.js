@@ -2,21 +2,21 @@ num_elemtos=8;
 offset=90;
 svg_canvas=undefined;
 template=undefined
-IMAGE_SIZE=80;
+IMAGE_SIZE=110;
 CIRCLE_CUT_WIDTH=120;
-CIRCLE_CUT_HEIGHT=200
+CIRCLE_CUT_HEIGHT=240
 DEBUG=false;
 topics=[]
 files_clockwise=[
-    ["devolvedgovernment","mayor2.png"],
-    ["eucomission","localauth3.png"],
-    ["transportproviders","carriage.png"],
-    ["ngo","occhio.png"],
-    ["activist","activist2.png"],
-    ["localgovernment","speaking2.png"],
-    ["citizens","women.png"],
-    ["centralgovernment","westiminister.png"],
-    ["business","factory2.png"]
+    ["devolvedgovernment","mayor2.png","Devolved Government"],
+    ["eucomission","localauth3.png", "European Comission"],
+    ["transportproviders","carriage.png", "Transport Providers"],
+    ["ngo","occhio.png","NGO"],
+    ["activist","activist2.png","Activists"],
+    ["localgovernment","speaking2.png", "Local Government"],
+    ["citizens","women.png", "Citizens"],
+    ["centralgovernment","westiminister.png", "Central Government"],
+    ["business","factory2.png", "Business"]
 ]
 
 links=
@@ -213,8 +213,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
             data:files_clockwise[j],
             x: radius_w+radius_w * Math.cos( (degrees-offset) ),
             y: radius_h+radius_h * Math.sin( (degrees-offset) ),
-            x_inside:   radius_w+(radius_w-80) * Math.cos( (degrees-offset) ),
-            y_inside:   radius_h+(radius_h-80) * Math.sin( (degrees-offset) ),
+            x_inside:   radius_w+(radius_w-100) * Math.cos( (degrees-offset) ),
+            y_inside:   radius_h+(radius_h-100) * Math.sin( (degrees-offset) ),
             status: "normal",
             id:j
         })
@@ -324,7 +324,10 @@ function createCircle(_svg1,radius_w,radius_h,files){
                 if(datarow.slugPow==datarow.slugResponsible)
                 {
                     console.log("insert article " + datarow.slugPow )
-                    insertArticle(datarow.Action ,datarow.POW, datarow.POW, d.data[1], d.data[1],"mouseover")
+                    var url=datarow.url
+                    if(url!==undefined && url.length>6){}
+                    else url=""
+                    insertArticle(datarow.Action ,datarow.pow_original, datarow.POW, d.data[1], d.data[1],url, "mouseover")
                 }
             //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
             })
@@ -342,8 +345,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
         g_enter.append("text")
         .attr("x", function(d) { return d.cx; })
-        .attr("y", function(d) { return "50px"; })
-        .text( function (d) { return  d.data[0]  } )
+        .attr("y", function(d) { return "74px"; })
+        .text( function (d) { return  d.data[2]  } )
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle")
         .attr("font-size", "12px")
@@ -365,10 +368,11 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
     //lineGenerator.curve(d3.curveCatmullRom.alpha(0.5));
     lineGenerator.curve(d3.curveNatural)
     //console.log(lineGenerator( [ [x1,y1],[x2,y2] ,[x2+100,y2+100] ] ));
-    svg_g.append('path')
+     patharrow=svg_g.append('path')
     .attr('class',()=>  'arrow2 arrow-'+id )
     .attr("data-number",datanumber)
-    .attr('marker-end',function(d){ if(elementNumber==(total) ) return    "url(#arrow)"})
+    .attr("fill", "none")
+    //.attr('marker-end',function(d){ if(elementNumber==(total) ) return    "url(#arrow)"})
     .attr('pointer-events',"visibleStroke")
     .attr("d", function(d) {
 
@@ -389,7 +393,14 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
     .attr('x2',x2)
     .attr('y2',y2)*/
     .style("stroke",color)
-    .on("click", function(d, i) {
+    var totalLength = patharrow.node().getTotalLength();
+    patharrow.attr("stroke-dasharray", totalLength + " " + totalLength)
+    .attr("stroke-dashoffset", totalLength)
+      .transition()
+        .duration(1000)
+        .attr("stroke-dashoffset", 0);
+
+    patharrow.on("click", function(d, i) {
         console.log("clickArrow")
         var num = d3.select(this).attr("data-number");
         datarow=globalData[num]
@@ -398,7 +409,10 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         var icon2=nodesBySlug[datarow.slugResponsible].data[1]
         //console.log(icon2)
         d3.selectAll(".article.clicked").remove()
-        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,"clicked")
+        var url=datarow.url
+        if(url!==undefined && url.length>6){}
+        else url=""
+        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")
 
     })
     .on("mouseover", function(d, i) {
@@ -432,9 +446,12 @@ function insertArrow(h,color){
     </svg>'
 }*/
 
-function insertArticle(text,title1, title2, icon1, icon2, extraclass){
-    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","extraclass":extraclass };
+function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
+    var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","link":url,"extraclass":extraclass };
     var html    = template(context);
-    $('#description').append(html)
+    aa=$('#description').append(html)
+    var hh= $("#description .article ").first().find(".text-container").height()
+    $("#description .article ").first().find(".image-line").css("height",hh+"px")
+
 
 }

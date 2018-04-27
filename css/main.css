@@ -14,8 +14,28 @@ svg image {
 svg .arrow2 {
   cursor: pointer;
 }
+svg text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+}
+.image-line {
+  width: 10px;
+  height: 100%;
+}
+.article {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+}
+.article h2 {
+  font-size: 16px;
+}
 .article h2 img {
   max-width: 20px;
+}
+.article h3,
+.article h2,
+.article h4 {
+  font-size: 16px;
 }
 .article h3 img,
 .article h2 img,
@@ -25,6 +45,16 @@ svg .arrow2 {
 .article img.dst-icon-image,
 .article img.src-icon-image {
   max-width: 20px;
+}
+.article a {
+  font-size: 10px;
+}
+.article .linkContainer {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .arrow2 {
   stroke-width: 3;
