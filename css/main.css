@@ -14,6 +14,9 @@ svg image {
 svg .arrow2 {
   cursor: pointer;
 }
+svg .arrow2:hover {
+  stroke: black!important;
+}
 svg text {
   font-family: 'Poppins', sans-serif;
   font-size: 16px;
@@ -87,7 +90,7 @@ svg text {
 }
 #filters {
   background-color: #EFEFEF;
-  padding: 6px;
+  padding: 20px;
   position: absolute;
   bottom: 0px;
   z-index: 100;

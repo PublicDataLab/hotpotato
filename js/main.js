@@ -10,10 +10,10 @@ topics=[]
 files_clockwise=[
     ["devolvedgovernment","mayor2.png","Devolved Government"],
     ["eucomission","localauth3.png", "European Comission"],
-    ["transportproviders","carriage.png", "Transport Providers"],
+    ["localgovernment","speaking2.png", "Local Government"],    
     ["ngo","occhio.png","NGO"],
     ["activist","activist2.png","Activists"],
-    ["localgovernment","speaking2.png", "Local Government"],
+    ["transportproviders","carriage.png", "Transport Providers"],
     ["citizens","women.png", "Citizens"],
     ["centralgovernment","westiminister.png", "Central Government"],
     ["business","factory2.png", "Business"]
@@ -393,11 +393,22 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         else ctrlPointX= x2+Math.abs(x1-x2)/2
         //return "M" + x1 + "," + y1 + " C " + x1 + ctrlPoint1 + "," + y1 + " " + x1 + ctrlPoint2 + "," + y2 + ctrlPoint3 + " " + x2 + "," + y2;
         aaa= "M" + x1 + " " + y1 + " q " + (ctrlPointX-x1) +" "  + (ctrlPointY-y1) +" "  + (x2-x1) +" " + (y2-y1)
+        console.log("x1:" + x1 + " y1 " + y1 + " x2:"+ x2 + " y2: "+y2 + "eleemn number:" +elementNumber);
+        pendiente=(y1-y2)/(x1-x2)
+        angulo=Math.atan(pendiente)
+        punto_medio=[Math.abs(x1+x2)/2 ,  Math.abs(y1+y2)/2]
+        distancia=(elementNumber*8- (total/2) * 8 )
+        //distancia=elementNumber*10;
+        punto=rotate(punto_medio[0],punto_medio[1],punto_medio[0],punto_medio[1]-distancia,-angulo*57.29577951308232 )
+        //return lineGenerator( [ [x1,y1],  [ Math.sin(angulo)*distancia +punto_medio[0] ,  Math.cos(angulo)*distancia + punto_medio[1] ], [x2,y2] ] )
+        return lineGenerator( [ [x1,y1],  punto, [x2,y2] ] )
+
 //console.log(aaa)
-    if(y2>y1)
-        return lineGenerator( [ [x1,y1],  [ (elementNumber*14- (total/2) * 14 ) + Math.abs(x1+x2)/2 , ( elementNumber* 14 - (total/2)*14 ) + Math.abs(y1+y2)/2], [x2,y2] ] )
+    /*if(y2>y1)
+        return lineGenerator( [ [x1,y1],  [ (elementNumber*14- (total/2) * 14 ) +punto_medio[0] , ( elementNumber* 14 - (total/2)*14 ) + Math.abs(y1+y2)/2], [x2,y2] ] )
     else
         return lineGenerator( [ [x1,y1],  [ -(elementNumber*14- (total/2) * 14 ) + Math.abs(x1+x2)/2 ,  + Math.abs(y1+y2)/2], [x2,y2] ] )
+        */
     })
     /*.attr('x1',x1)
     .attr('y1',y1)
@@ -453,4 +464,16 @@ function polarToCartesian(centerX, centerY, radiusX, radiusY, angleInDegrees) {
             x: centerX + (radiusX * Math.cos(angleInRadians)),
             y: centerY + (radiusY * Math.sin(angleInRadians))
         };
+    }
+//https://stackoverflow.com/questions/17410809/how-to-calculate-rotation-in-2d-in-javascript
+//The first two parameters are the X and Y coordinates of the central point (the origin around which the second point will be rotated).
+//The next two parameters are the coordinates of the point that we'll be rotating. The last parameter is the angle, in degrees.
+
+    function rotate(cx, cy, x, y, angle) {
+        var radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+            ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+        return [nx, ny];
     }
