@@ -116,3 +116,37 @@ svg text {
   text-decoration: none;
   color: white;
 }
+#demo-layer {
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.2);
+}
+#demo-inner {
+  width: 40%;
+  min-width: 300px;
+  background-color: #333;
+  color: #fff;
+  height: auto;
+  position: absolute;
+  bottom: 300px;
+  right: 100px;
+  padding: 10px;
+  font-family: 'Nunito Sans', sans-serif;
+  border-radius: 6px;
+}
+#demo-controls {
+  font-size: 30px;
+  width: auto;
+  height: auto;
+  /*position:absolute;
+    bottom:200px;
+    left: 100px;*/
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+}

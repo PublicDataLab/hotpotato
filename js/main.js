@@ -10,7 +10,7 @@ topics=[]
 files_clockwise=[
     ["devolvedgovernment","mayor2.png","Devolved Government"],
     ["eucomission","localauth3.png", "European Comission"],
-    ["localgovernment","speaking2.png", "Local Government"],    
+    ["localgovernment","speaking2.png", "Local Government"],
     ["ngo","occhio.png","NGO"],
     ["activist","activist2.png","Activists"],
     ["transportproviders","carriage.png", "Transport Providers"],
@@ -43,7 +43,10 @@ window.onload = function() {
     svg = d3.select("#canvas");
     createCircle(svg,(w-CIRCLE_CUT_WIDTH*2)/2,(h-CIRCLE_CUT_HEIGHT)/2,files_clockwise)
 
-
+    $('#demo-btn').on("click",        function(d){startDemo()}    )
+    $('#next').on("click",        function(d){nextSlide()}    )
+    $('#prev').on("click",        function(d){prevSide()}    )
+    $('#stop').on("click",        function(d){stop()}    )
 
     d3.dsv(",", "carsdata.csv", function(d,i) {
 
@@ -110,10 +113,10 @@ function buildFilters(_topics){
       .enter()
       .append("a")
       .attr("class", "filter btn selected")
-      .style("background", function(d, i) { console.log(d[0]); return colores( d[0].length %20)} )
+      .style("background", function(d, i) {  return colores( d[0].length %20)} )
       .html(function(d){return d[0]})
       .on("click", function(d, i) {
-          console.log("asd" + d)
+
           if( d3.select(this).classed("selected")==true){
               d3.select(this).classed("selected",false)
 
@@ -261,6 +264,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
         //.attr('y',function(d){return d.y}  )
 
     var imageEnter=g_enter.append("image")
+        .attr("id",(d)=>{return "slug-" + d.slug})
         .attr('xlink:href',function(d){return'img/'+d.data[1]})
         .attr('width',IMAGE_SIZE+'px')
         .attr('height',IMAGE_SIZE+'px')
@@ -273,7 +277,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
         imageEnter.on("click", function(d, i) {
             var num=$(this).attr("data-id")
             d3.event.stopPropagation();
-            if(d3.event.shiftKey==false){
+            if(d3.event.shiftKey==false || fakeShift){
                 _svg1.selectAll(".arrow2").remove();
                 _svg1.selectAll("g.node")
                 .attr( "filter","")
@@ -312,20 +316,14 @@ function createCircle(_svg1,radius_w,radius_h,files){
             var num=$(this).attr("data-id")
             //add article
             //TODO estoy metiendo los articulos al hacer mouseover
-            console.log(d)
-
             if(d.status=="normal"){
                 d.status="mouseover"
                 $(this).attr( "filter","url(#blurFilter2)")
             }
-
             if(dataByPow[d.slug]==undefined) return;
             dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
-                //insertArticle(text, title1, title2, icon1, icon2,class){
-                //console.log(datarow)
                 if(datarow.slugPow==datarow.slugResponsible)
                 {
-                    console.log("insert article " + datarow.slugPow )
                     var url=datarow.url
                     if(url!==undefined && url.length>6){}
                     else url=""
@@ -393,7 +391,7 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         else ctrlPointX= x2+Math.abs(x1-x2)/2
         //return "M" + x1 + "," + y1 + " C " + x1 + ctrlPoint1 + "," + y1 + " " + x1 + ctrlPoint2 + "," + y2 + ctrlPoint3 + " " + x2 + "," + y2;
         aaa= "M" + x1 + " " + y1 + " q " + (ctrlPointX-x1) +" "  + (ctrlPointY-y1) +" "  + (x2-x1) +" " + (y2-y1)
-        console.log("x1:" + x1 + " y1 " + y1 + " x2:"+ x2 + " y2: "+y2 + "eleemn number:" +elementNumber);
+        //console.log("x1:" + x1 + " y1 " + y1 + " x2:"+ x2 + " y2: "+y2 + "eleemn number:" +elementNumber);
         pendiente=(y1-y2)/(x1-x2)
         angulo=Math.atan(pendiente)
         punto_medio=[Math.abs(x1+x2)/2 ,  Math.abs(y1+y2)/2]
@@ -438,11 +436,11 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
 
     })
     .on("mouseover", function(d, i) {
-        console.log( $(this) )
+        //console.log( $(this) )
         d3.select(this).classed("mouseover",true)
     })
     .on("mouseout", function(d, i) {
-        console.log( $(this) )
+        //console.log( $(this) )
         d3.select(this).classed("mouseover",false)
     })
 }

@@ -12,6 +12,9 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
@@ -38,7 +41,7 @@
           <ul class="nav navbar-nav">
               <li> <a href="#"> Home </a></li>
               <li> <a href="#"> About </a></li>
-              <li> <a href="#"> Demo </a></li>
+              <li> <a href="#" id="demo-btn"> Demo </a></li>
               <li> <a href="#"> What next </a></li>
               <li> <a href="#"> Credits </a></li>
           </ul>
@@ -123,6 +126,8 @@
   </div>
 
 
+
+
 </div><!-- container -->
 
 
@@ -131,6 +136,63 @@
       <footer>
 
       </footer>
+
+  <div id="demo-layer">
+      <div id="demo-inner">
+          <div class="demo-content" id="demo-content-1">
+             <p><strong>   This is a demo which explains the Hot Potato Machine. </strong></p>
+              <p>
+              The Hot Potato Machine is an interactive digital device that pulls in previously analysed data about an issue. It offers an visual analysis showing different perspectives on who different actors think should take action to address an issue and what those actions are.
+                </p>
+              <p>This demo shows how a user might take a route through one aspect of the air pollution issue, focusing on diesel taxis, based on our data gathered relating to London Borough of Camden in January 2018.
+                <br/>
+              The underlying framework and method could be adapted applied to other locations, and other issues.
+          </p>
+          </div>
+
+          <div class="demo-content" id="demo-content-2">
+              The screen shows different actors who are involved in the issue of air pollution, according to our data.
+              <br/>
+              Let’s imagine a user who wants to explore the issue of taxis that use diesel.
+          </div>
+
+          <div class="demo-content" id="demo-content-3">
+              If the user’s <strong> mouse hovers </strong> over an actor, then on the tab they can see any actions this actor has apportioned to themselves.
+<p>
+  Here the user hovers over Devolved Government. In the case of London, there are several bodies concerned with the issue of diesel taxis including Mayor of London.
+<br/>
+  The user can click on the link under the summary in the tab to go directly to the online document and find out more.
+</p>
+
+          </div>
+          <div class="demo-content" id="demo-content-4">
+              Here the user clicks on an actor labelled Devolved Government.
+              <p>Lines appear from this actor to other actors because our data shows that it apportions responsibility for taking action about diesel taxis to them.
+              </p>
+          </div>
+
+          <div class="demo-content" id="demo-content-5">
+              The user can hold down the shift key and click on another actor in order to see how each of these actors has apportioned responsibility and actions to other actors.
+
+          </div>
+
+          <div class="demo-content" id="demo-content-6">
+             <p> If the user wants to see just the links between two specific actors, they click on the first one, and then hold down CAPS while they click on the second actor.</p>
+              <br/> Then they can see patterns in how responsibilities are being apportioned between these two actors.
+          </div>
+
+          <div class="demo-content" id="demo-content-7">
+              The user can click on as many actors as exist (with the shift key down), to see patterns in how responsibilities are being apportioned to other actors – or how the hot potato is being thrown around.
+          </div>
+
+          <p id="demo-controls" >
+              <a href="#" id="stop"> <i class="fa fa-stop" ></i></a>
+              <a href="#" id="next"> <i class="fa fa-forward" ></i></a>
+          </p>
+      </div>
+
+
+  </div>
       <script id="article-template" type="text/x-handlebars-template">
           <div class="article {{extraclass}}">
               <div class="row">
@@ -182,9 +244,9 @@
         <script src="https://d3js.org/d3-fetch.v1.min.js"></script>
         <script src="https://d3js.org/d3.v4.min.js"></script>
 
+
         <script src="js/main.js"></script>
-        <!-- <script src="js/demo.js"></script>
-        <script src="http://localhost:35729/livereload.js"> </script>-->
+        <script src="js/demo.js"></script>
 
 
     </body>
