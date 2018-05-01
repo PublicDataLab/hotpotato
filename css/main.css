@@ -130,7 +130,7 @@ svg text {
   bottom: 0px;
   z-index: 100;
 }
-.btn {
+a.btn {
   -webkit-border-radius: 6;
   -moz-border-radius: 6;
   border-radius: 0px;
@@ -144,13 +144,17 @@ svg text {
   text-decoration: none;
   margin-left: 10px;
 }
+a.btn:hover,
+a.btn:focus {
+  color: #ccc;
+}
 .btn.filter {
   -webkit-border-radius: 6;
   -moz-border-radius: 6;
   border-radius: 4px;
   font-family: Arial;
   display: inline-block;
-  color: #333;
+  color: #777;
   font-size: 9px;
   padding: 3px 6px 3px 6px;
   margin: 4px;
@@ -160,10 +164,10 @@ svg text {
 }
 .btn.filter:not(.selected) {
   background: transparent!important;
-  border: solid #333 1px;
+  border: solid #777 1px;
 }
 .btn.filter.selected {
-  background: #333;
+  background: white;
   text-decoration: none;
   color: rgba(0, 0, 0, 0.7);
 }
