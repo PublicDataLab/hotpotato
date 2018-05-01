@@ -9,7 +9,7 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css?family=Nunito+Sans" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,400" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
@@ -37,17 +37,21 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">Hot potato</a>
+          <a class="navbar-brand" href="#">Hot Potato Machine</a>
+        </div>
           <ul class="nav navbar-nav">
               <li> <a href="#"> Home </a></li>
               <li> <a href="#"> About </a></li>
-              <li> <a href="#" id="demo-btn"> Demo </a></li>
               <li> <a href="#"> What next </a></li>
               <li> <a href="#"> Credits </a></li>
+
           </ul>
+          <ul class="nav navbar-nav navbar-right">
+              <li> <a href="#" id="demo-btn"> Demo </a></li>
+           </ul>
         </div>
 
-      </div>
+
     </nav>
 
 
@@ -88,41 +92,24 @@
         </div>
         <div class="col-md-3" id="description">
             <div id="description-inner">
-            <!--    <div class="article">
-                    <div class="row">
-                        <div class="col-xs-10 col-xs-offset-1">
-                            <h2>
-                                <img src="img/activist2.png"/> Activists
-                            </h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-1 col-xs-offset-1">
-                            <div class="arrow" data-color="#990000"> </div>
-                        </div>
-                        <div "col-xs-9">
-                            text describing action.
-                            <br/>
-                            more text blab blabh blahbs
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-10 col-xs-offset-1">
-                            <h3>
-                                <img src="img/activist2.png"/> Government
-                            </h3>
-                        </div>
-                    </div>
+                <div id="basetext" style="font-size:12px; margin-top:50px;" clas="row">
+                    <h4>What should be done about air pollution and who should do it? </h4>
+
+                    <p>Explore who is passing on the hot potato. Roll your mouse over one of the actors to see who they are passing the hot potato on to. </p>
+                        <p>Click to see the detail of the actions actors say others should take to address air pollution.</p>
                 </div>
-            </div-->
        </div>
       </div>
   </div>
 
   <div class="row" id="filters">
-      <a href="#" id="selectAll">  select All        </a>
-      <a href="#" id="selectNone">  select None        </a>
-      <br/>
+      <a href="#" id="selectAll" class="btn">  SELECT ALL    <i class="far fa-check-square"></i>
+
+    </a>
+      <a href="#" id="selectNone" class="btn">  SELECT NONE     <i class="far fa-square"></i>
+
+    </a>
+
   </div>
 
 
@@ -223,7 +210,7 @@
               {{#if link}}
               <div class="row">
                   <div class="col-xs-9 col-xs-offset-2 linkContainer">
-                     &#8226; <a href="{{{link}}}"> {{{link}}}</a>
+                     &#8226; <a href="{{{link}}}" target="_blank"> {{{link}}}</a>
                   </div>
               </div>
             {{/if}}
@@ -247,6 +234,7 @@
 
         <script src="js/main.js"></script>
         <script src="js/demo.js"></script>
+        <script src="http://localhost:35729/livereload.js"> </script>
 
 
     </body>

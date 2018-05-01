@@ -5,11 +5,47 @@
    ========================================================================== */
 body{
     overflow: hidden;
-    height: 100vh
+    height: 100vh;
+    padding-top: 30px;
+    font-family: 'Poppins', sans-serif;
 }
 #canvas{
 
 }
+
+nav.navbar{
+    height: 30px!important;
+    .container{
+        padding:0px;
+    }
+    min-height: auto;
+    margin-bottom: 0px;
+    border:0px;
+
+a.navbar-brand{
+    height: 20px;
+}
+    a.navbar-brand, ul.navbar-nav>li>a{
+        font-family: 'Nunito Sans', sans-serif;
+        font-weight:200;
+        padding-top:5px;
+        padding-bottom:5px;
+        color:#fff;
+        text-shadow: none;
+        &:hover{
+            color:#dadada;
+        }
+    }
+
+    #demo-btn{
+        text-transform: uppercase;
+    }
+}
+
+nav.navbar{
+    background:#343a40!important;
+}
+
 svg{
     cursor: arrow;
     image{
@@ -23,7 +59,7 @@ svg{
     }
     text{
         font-family: 'Poppins', sans-serif;
-        font-size:16px;
+        font-size:15px;
     }
 }
 .image-line{
@@ -96,18 +132,38 @@ svg text {
 }
 
 #filters{
-    background-color: #EFEFEF;
-    padding:20px;
+    background:#343a40!important;
+    padding:15px;
+    padding-top:8px;
+    padding-bottom:8px;
     position: absolute;
     bottom: 0px;
     z-index:100;
 
 
 }
+
+.btn {
+  -webkit-border-radius: 6;
+  -moz-border-radius: 6;
+  border-radius: 0px;
+  font-family: Arial;
+  display: inline-block;
+  color: #eee;
+  font-size: 8px;
+
+  padding: 2px 6px 3px 6px;
+  margin:4px;
+  border: solid #eee 1px;
+  text-decoration: none;
+  margin-left:10px;
+}
+
+
 .btn.filter {
   -webkit-border-radius: 6;
   -moz-border-radius: 6;
-  border-radius: 6px;
+  border-radius: 4px;
   font-family: Arial;
   display: inline-block;
   color: #333;
@@ -115,17 +171,20 @@ svg text {
 
   padding: 3px 6px 3px 6px;
   margin:4px;
-  border: solid #333 1px;
+  border:solid transparent 1px;;
   text-decoration: none;
+  text-transform: uppercase;
 }
 .btn.filter:not(.selected){
     background: transparent!important;
+    border: solid #333 1px;
 }
 
 .btn.filter.selected {
   background: #333;
   text-decoration: none;
-  color:white;
+  color:rgba(0,0,0,0.7);
+
 }
 
 

@@ -2,14 +2,14 @@ num_elemtos=8;
 offset=90;
 svg_canvas=undefined;
 template=undefined
-IMAGE_SIZE=110;
+IMAGE_SIZE=90;
 CIRCLE_CUT_WIDTH=120;
-CIRCLE_CUT_HEIGHT=240
+CIRCLE_CUT_HEIGHT=160
 DEBUG=false;
 topics=[]
 files_clockwise=[
     ["devolvedgovernment","mayor2.png","Devolved Government"],
-    ["eucomission","localauth3.png", "European Comission"],
+    ["eucomission","localauth3.png", "European Commission"],
     ["localgovernment","speaking2.png", "Local Government"],
     ["ngo","occhio.png","NGO"],
     ["activist","activist2.png","Activists"],
@@ -35,7 +35,7 @@ window.onload = function() {
     w=$('#elements').width();
     var source   = document.getElementById("article-template").innerHTML;
     template = Handlebars.compile(source);
-    h=w_height-50
+    h=w_height-150
     colores=d3.scaleOrdinal(d3.schemeCategory20);
     $('#canvas').css('width',w+'px')
     $('#canvas').css('height',h+'px')
@@ -223,8 +223,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
             y_inside:   radius_h+(radius_h-100) * Math.sin( (degrees-offset) ),*/
             x: polarToCartesian(radius_w , radius_h , radius_w, radius_h, j * degrees_seperation-offset).x,
             y:polarToCartesian(radius_w , radius_h , radius_w, radius_h, j * degrees_seperation-offset).y,
-            x_inside:polarToCartesian(radius_w , radius_h , radius_w-100, radius_h-100, j * degrees_seperation-offset).x,
-            y_inside:polarToCartesian(radius_w , radius_h , radius_w-100, radius_h-100, j * degrees_seperation-offset).y,
+            x_inside:polarToCartesian(radius_w , radius_h , radius_w-80, radius_h-80, j * degrees_seperation-offset).x,
+            y_inside:polarToCartesian(radius_w , radius_h , radius_w-80, radius_h-80, j * degrees_seperation-offset).y,
             status: "normal",
             id:j
         })
@@ -286,7 +286,6 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     otrosD.status="normal"
                 })
                 d3.selectAll(".article.clicked").remove()
-                //TODO remove other selections
             }
             if(d.status=="clicked"){
                 _svg1.selectAll(".arrow-"+d.data[0]).remove()
@@ -341,11 +340,12 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     $(this).attr("data-status","")
                 }
                 d3.selectAll(".article.mouseover").remove()
+                $("#basetext").show();
         })
 
         g_enter.append("text")
         .attr("x", function(d) { return d.cx; })
-        .attr("y", function(d) { return "74px"; })
+        .attr("y", function(d) { return "60px"; })
         .text( function (d) { return  d.data[2]  } )
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle")
@@ -446,6 +446,7 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
 }
 
 function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
+    $("#basetext").hide();
     var context = {"body": text, "src_title" :title1, "dst_title": title2, "src_image": icon1 , "dst_image": icon2, "colorArrow":"#000","link":url,"extraclass":extraclass };
     var html    = template(context);
     aa=$('#description').append(html)
