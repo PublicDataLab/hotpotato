@@ -192,7 +192,7 @@ function drawArrowFromTo(originNode){
         else counter_target[datarow.slugResponsible] +=1
         if(checkInFilters( datarow.Topic) )
         {
-            canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.id,counter_target[datarow.slugResponsible],totalElements)
+            canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.slugResponsible, datarow.id,counter_target[datarow.slugResponsible],totalElements)
         }
         i++;
     //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
@@ -288,7 +288,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                 d3.selectAll(".article.clicked").remove()
             }
             if(d.status=="clicked"){
-                _svg1.selectAll(".arrow-"+d.data[0]).remove()
+                _svg1.selectAll(".arrow-src-"+d.data[0]).remove()
                 d.status="normal"
                 $(this).parent().attr( "filter","")
             }
@@ -363,13 +363,13 @@ function createCircle(_svg1,radius_w,radius_h,files){
 
 }
 
-function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
+function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,elementNumber,total){
     var lineGenerator = d3.line();
     //lineGenerator.curve(d3.curveCatmullRom.alpha(0.5));
     lineGenerator.curve(d3.curveNatural)
     //console.log(lineGenerator( [ [x1,y1],[x2,y2] ,[x2+100,y2+100] ] ));
      patharrow=svg_g.append('path')
-    .attr('class',()=>  'arrow2 arrow-'+id )
+    .attr('class',()=>  'arrow2 arrow-src-'+src_slug + ' arrow-target-'+target_slug)
     .attr("data-number",datanumber)
     .attr("fill", "none")
     .attr('marker-end',function(d){
@@ -382,10 +382,9 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         //}
 
     })
-    .attr('pointer-events',"visibleStroke")
+    //.attr('pointer-events',"visibleStroke")
     .attr("d", function(d) {
-
-         if(y1<y2) ctrlPointY= y1+Math.abs(y2-y1)/2
+        if(y1<y2) ctrlPointY= y1+Math.abs(y2-y1)/2
          else ctrlPointY= y2+Math.abs(y1-y2)/2
         if(x1<x2)  ctrlPointX= x1+Math.abs(x2-x1)/2
         else ctrlPointX= x2+Math.abs(x1-x2)/2
@@ -424,7 +423,9 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         console.log("clickArrow")
         var num = d3.select(this).attr("data-number");
         datarow=globalData[num]
-        var icon1=nodesBySlug[datarow.slugPow].data[1]
+        insertArticles(datarow.slugPow,datarow.slugResponsible);
+        //d3.select(this).classed("clicked",true)
+    /*    var icon1=nodesBySlug[datarow.slugPow].data[1]
         //console.log(icon1)
         var icon2=nodesBySlug[datarow.slugResponsible].data[1]
         //console.log(icon2)
@@ -432,16 +433,37 @@ function canvasInsertArrow(x1,y1,x2,y2,color,id,datanumber,elementNumber,total){
         var url=datarow.url
         if(url!==undefined && url.length>6){}
         else url=""
-        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")
+        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")*/
 
     })
     .on("mouseover", function(d, i) {
         //console.log( $(this) )
-        d3.select(this).classed("mouseover",true)
+        var clases=d3.select(this).attr("class")
+        console.log("."+clases.replace(/\s/g,"."))
+        d3.selectAll("."+clases.replace(/\s/g,".")).classed("mouseover",true)
     })
     .on("mouseout", function(d, i) {
         //console.log( $(this) )
-        d3.select(this).classed("mouseover",false)
+        var clases=d3.select(this).attr("class")
+    //    console.log("."+clases.replace(" ","."))
+        d3.selectAll("."+clases.replace(/\s/g,".")).classed("mouseover",false)
+    })
+}
+
+function insertArticles(src_slug, target_slug){
+    d3.selectAll(".article.clicked").remove()
+    dataByPow[src_slug].forEach(function(datarow){ //recorro todos los
+        if(datarow.slugResponsible==target_slug)
+        {
+            var icon1=nodesBySlug[src_slug].data[1]
+            //console.log(icon1)
+            var icon2=nodesBySlug[target_slug].data[1]
+            var url=datarow.url
+            if(url!==undefined && url.length>6){}
+            else url=""
+            insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")
+        }
+    //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
 }
 

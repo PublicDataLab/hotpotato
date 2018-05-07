@@ -47,9 +47,6 @@ svg image {
 svg .arrow2 {
   cursor: pointer;
 }
-svg .arrow2:hover {
-  stroke: black!important;
-}
 svg text {
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
@@ -93,13 +90,16 @@ svg text {
   text-overflow: ellipsis;
 }
 .arrow2 {
-  stroke-width: 3;
+  stroke-width: 1;
   stroke: #000;
   fill: transparent;
 }
-.arrow2 .mouseover {
+.arrow2.mouseover {
   stroke: #f00!important;
 }
+/*.arrow2.clicked{
+    stroke:#f00!important;
+}*/
 #arrow {
   stroke-width: 1;
   stroke-dasharray: 0;
