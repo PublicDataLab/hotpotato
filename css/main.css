@@ -51,6 +51,9 @@ svg text {
   font-family: 'Poppins', sans-serif;
   font-size: 15px;
 }
+svg text.mouseover {
+  fill: #d62728;
+}
 .image-line {
   width: 10px;
   height: 100%;
@@ -182,13 +185,13 @@ a.btn:focus {
   background: rgba(255, 255, 255, 0.2);
 }
 #demo-inner {
-  width: 40%;
+  width: 50%;
   min-width: 300px;
   background-color: #333;
   color: #fff;
   height: auto;
   position: absolute;
-  bottom: 300px;
+  bottom: 100px;
   right: 100px;
   padding: 10px;
   font-family: 'Nunito Sans', sans-serif;

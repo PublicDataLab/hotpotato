@@ -43,10 +43,12 @@ window.onload = function() {
     svg = d3.select("#canvas");
     createCircle(svg,(w-CIRCLE_CUT_WIDTH*2)/2,(h-CIRCLE_CUT_HEIGHT)/2,files_clockwise)
 
-    $('#demo-btn').on("click",        function(d){startDemo()}    )
-    $('#next').on("click",        function(d){nextSlide()}    )
-    $('#prev').on("click",        function(d){prevSide()}    )
-    $('#stop').on("click",        function(d){stop()}    )
+    $('#demo-btn').on("click",        function(event){  event.stopPropagation(); startDemo()}    )
+    $('#next').on("click",        function(event){  event.stopPropagation(); nextSlide()}    )
+    $('#prev').on("click",        function(event){  event.stopPropagation(); prevSide()}    )
+    $('#stop').on("click",        function(event){  event.stopPropagation(); stop()}    )
+    $('#demo-layer').on("click",        function(event){  event.stopPropagation(); stop()}    )
+
 
     d3.dsv(",", "carsdata.csv", function(d,i) {
 
@@ -68,12 +70,17 @@ window.onload = function() {
            dataByPow=d3.nest()
             .key(function(d) { return d.slugPow; } )
             .object(data);
-            dataByPowByResponsible=d3.nest()
 
+            dataByPowByResponsibleCounter=d3.nest()
              .key(function(d) { return d.slugPow; } )
              .key(function(d) { return d.slugResponsible; } )
              .rollup(function(leaves) { return leaves.length; })
              .object(data);
+
+             dataByPowByResponsible=d3.nest()
+              .key(function(d) { return d.slugPow; } )
+              .key(function(d) { return d.slugResponsible; } )
+              .object(data);
 
             dataByTopic=d3.nest()
              .key(function(d) { return d.Topic; } )
@@ -162,12 +169,12 @@ function buildLinks(){
    });
 }
 
-function drawArrowFromTo(originNode){
+function drawArrowFrom(originNode){
     // {Action: "Funding for ULEVs: Plug In Car and Plug In Van Grant Schemes", Action2: "Transition to electric and low-emission vehicles", slugPow: "centralgovernment", POW: "Central Government", Responsible: "Central Government", …}
     if(dataByPow[originNode.slug]==undefined) return;
-    var i=0;
-    var countArrow=0;
-    dataByPow[originNode.slug].forEach(function(datarow){ //recorro todos los
+    //var i=0;
+/*      var countArrow=0;
+        dataByPow[originNode.slug].forEach(function(datarow){ //recorro todos los
         //console.log(datarow)
         var targetNodeSlug=datarow.slugResponsible
         var targetNode=nodesBySlug[targetNodeSlug]
@@ -176,7 +183,7 @@ function drawArrowFromTo(originNode){
         var color=colores( datarow.Topic.length %20)
         if(checkInFilters( datarow.Topic) )
             countArrow++;
-    });
+    });*/
      counter_target={}
     dataByPow[originNode.slug].forEach(function(datarow){ //recorro todos los
         //console.log(datarow)
@@ -187,16 +194,43 @@ function drawArrowFromTo(originNode){
         var color=colores( datarow.Topic.length %20)
     //    console.log(originNode.slug)
     //    console.log(datarow.slugResponsible)
-        var totalElements=dataByPowByResponsible[originNode.slug][datarow.slugResponsible]
+        var totalElements=dataByPowByResponsibleCounter[originNode.slug][datarow.slugResponsible]
+
         if(counter_target[datarow.slugResponsible]==undefined) counter_target[datarow.slugResponsible]=1;
         else counter_target[datarow.slugResponsible] +=1
+
+        if(checkInFilters( datarow.Topic) )
+        {
+            canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.slugResponsible, datarow.id, counter_target[datarow.slugResponsible],totalElements)
+        }
+        //i++;
+    //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
+    })
+}
+
+function drawArrowFromTo(originNode,targetNode,recursive){
+    recursive = typeof recursive !== 'undefined' ? recursive : true;
+    if(recursive) drawArrowFromTo(targetNode,originNode,false)
+
+    console.log(dataByPowByResponsible[originNode.slug])
+
+    // {Action: "Funding for ULEVs: Plug In Car and Plug In Van Grant Schemes", Action2: "Transition to electric and low-emission vehicles", slugPow: "centralgovernment", POW: "Central Government", Responsible: "Central Government", …}
+    if(dataByPowByResponsible[originNode.slug]==undefined) return;
+    if(dataByPowByResponsible[originNode.slug][targetNode.slug]==undefined) return;
+    console.log(dataByPowByResponsible[originNode.slug][targetNode.slug])
+    counter_target={}
+    dataByPowByResponsible[originNode.slug][targetNode.slug].forEach(function(datarow){ //recorro todos los
+        var color=colores( datarow.Topic.length %20)
+        var totalElements=dataByPowByResponsible[originNode.slug][datarow.slugResponsible].length
+        if(counter_target[datarow.slugResponsible]==undefined) counter_target[datarow.slugResponsible]=1;
+        else counter_target[datarow.slugResponsible] +=1
+        console.log(counter_target)
         if(checkInFilters( datarow.Topic) )
         {
             canvasInsertArrow(originNode.x_inside,originNode.y_inside, targetNode.x_inside , targetNode.y_inside , color,originNode.slug, datarow.slugResponsible, datarow.id,counter_target[datarow.slugResponsible],totalElements)
         }
-        i++;
-    //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
+
 
 }
 
@@ -277,36 +311,44 @@ function createCircle(_svg1,radius_w,radius_h,files){
         imageEnter.on("click", function(d, i) {
             var num=$(this).attr("data-id")
             d3.event.stopPropagation();
-            if(d3.event.shiftKey==false || fakeShift){
-                _svg1.selectAll(".arrow2").remove();
-                _svg1.selectAll("g.node")
-                .attr( "filter","")
-                .each(function(otrosD, i) {
-                    if(d!=otrosD)
-                    otrosD.status="normal"
-                })
-                d3.selectAll(".article.clicked").remove()
-            }
-            if(d.status=="clicked"){
-                _svg1.selectAll(".arrow-src-"+d.data[0]).remove()
-                d.status="normal"
-                $(this).parent().attr( "filter","")
-            }
-            else{
-                d.status="clicked"
-                $(this).parent().attr( "filter","url(#sepiatone)")
-                // add articles
-                //insertArticle("tirri <br/> tirrii 2" ,d.data[0], "otro", d.data[1], d.data[1])
-                //draw links
-                //console.log(event.altKey)
-                /*if(links[d.id]!=undefined){
-                    links[d.id].link.forEach(function(destid){
-                            console.log(event.altKey)
-                            canvasInsertArrow(d.x +40,d.y+40, nodes[destid].x +40 ,nodes[destid].y+40,"#ff00ff",d.data[0])
+            if(d3.event.altKey==true || fakeAlt==true){
+                selected_nodes1=nodes.filter((d1)=>{return d1.status=="clicked"})
+                if(selected_nodes1.length>0){
+                    _svg1.selectAll(".arrow2").remove();
+                    _svg1.selectAll("g.node")
+                    .attr( "filter","")
+                    .each(function(otrosD, i) {
+                        if(d!=otrosD)
+                        otrosD.status="normal"
                     })
-                }*/
-                console.log(d)
-                drawArrowFromTo(d)
+                    d3.selectAll(".article.clicked").remove()
+                    drawArrowFromTo(d,selected_nodes1[0])
+                }
+            }
+
+            else {
+                if(d3.event.shiftKey==false && fakeShift==false){ //mark all other elements as not selected
+                    _svg1.selectAll(".arrow2").remove();
+                    _svg1.selectAll("g.node")
+                    .attr( "filter","")
+                    .each(function(otrosD, i) {
+                        if(d!=otrosD)
+                        otrosD.status="normal"
+                    })
+                    d3.selectAll(".article.clicked").remove()
+                }
+
+
+                if(d.status=="clicked"){
+                    _svg1.selectAll(".arrow-src-"+d.data[0]).remove()
+                    d.status="normal"
+                    $(this).parent().attr( "filter","")
+                }
+                else{
+                    d.status="clicked"
+                    $(this).parent().attr( "filter","url(#sepiatone)")
+                    drawArrowFrom(d)
+                }
             }
             //$(this).attr("data-status","clicked")
 
@@ -318,6 +360,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
             if(d.status=="normal"){
                 d.status="mouseover"
                 $(this).attr( "filter","url(#blurFilter2)")
+                d3.select(this.parentNode).selectAll("text").classed("mouseover",true)
             }
             if(dataByPow[d.slug]==undefined) return;
             dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
@@ -339,6 +382,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     $(this).attr( "filter","")
                     $(this).attr("data-status","")
                 }
+                d3.select(this.parentNode).selectAll("text").classed("mouseover",false)
                 d3.selectAll(".article.mouseover").remove()
                 $("#basetext").show();
         })
@@ -373,24 +417,14 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
     .attr("data-number",datanumber)
     .attr("fill", "none")
     .attr('marker-end',function(d){
-        //if(total%2==0){
-        //        if(elementNumber==(total/2 ) ) return    "url(#arrow)"
-        //}
-        //else{
+
                 if(elementNumber==(Math.floor(total/2)  ) ) return    "url(#arrow)"
                 if(total==1)return    "url(#arrow)"
-        //}
+
 
     })
     //.attr('pointer-events',"visibleStroke")
     .attr("d", function(d) {
-        if(y1<y2) ctrlPointY= y1+Math.abs(y2-y1)/2
-         else ctrlPointY= y2+Math.abs(y1-y2)/2
-        if(x1<x2)  ctrlPointX= x1+Math.abs(x2-x1)/2
-        else ctrlPointX= x2+Math.abs(x1-x2)/2
-        //return "M" + x1 + "," + y1 + " C " + x1 + ctrlPoint1 + "," + y1 + " " + x1 + ctrlPoint2 + "," + y2 + ctrlPoint3 + " " + x2 + "," + y2;
-        aaa= "M" + x1 + " " + y1 + " q " + (ctrlPointX-x1) +" "  + (ctrlPointY-y1) +" "  + (x2-x1) +" " + (y2-y1)
-        //console.log("x1:" + x1 + " y1 " + y1 + " x2:"+ x2 + " y2: "+y2 + "eleemn number:" +elementNumber);
         pendiente=(y1-y2)/(x1-x2)
         angulo=Math.atan(pendiente)
         punto_medio=[Math.abs(x1+x2)/2 ,  Math.abs(y1+y2)/2]
@@ -400,17 +434,9 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
         //return lineGenerator( [ [x1,y1],  [ Math.sin(angulo)*distancia +punto_medio[0] ,  Math.cos(angulo)*distancia + punto_medio[1] ], [x2,y2] ] )
         return lineGenerator( [ [x1,y1],  punto, [x2,y2] ] )
 
-//console.log(aaa)
-    /*if(y2>y1)
-        return lineGenerator( [ [x1,y1],  [ (elementNumber*14- (total/2) * 14 ) +punto_medio[0] , ( elementNumber* 14 - (total/2)*14 ) + Math.abs(y1+y2)/2], [x2,y2] ] )
-    else
-        return lineGenerator( [ [x1,y1],  [ -(elementNumber*14- (total/2) * 14 ) + Math.abs(x1+x2)/2 ,  + Math.abs(y1+y2)/2], [x2,y2] ] )
-        */
+
     })
-    /*.attr('x1',x1)
-    .attr('y1',y1)
-    .attr('x2',x2)
-    .attr('y2',y2)*/
+
     .style("stroke",color)
     var totalLength = patharrow.node().getTotalLength();
     patharrow.attr("stroke-dasharray", totalLength + " " + totalLength)
@@ -420,7 +446,6 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
         .attr("stroke-dashoffset", 0);
 
     patharrow.on("click", function(d, i) {
-        console.log("clickArrow")
         var num = d3.select(this).attr("data-number");
         datarow=globalData[num]
         insertArticles(datarow.slugPow,datarow.slugResponsible);
@@ -439,7 +464,6 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
     .on("mouseover", function(d, i) {
         //console.log( $(this) )
         var clases=d3.select(this).attr("class")
-        console.log("."+clases.replace(/\s/g,"."))
         d3.selectAll("."+clases.replace(/\s/g,".")).classed("mouseover",true)
     })
     .on("mouseout", function(d, i) {
@@ -463,7 +487,6 @@ function insertArticles(src_slug, target_slug){
             else url=""
             insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")
         }
-    //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
     })
 }
 
