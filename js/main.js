@@ -311,7 +311,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
         imageEnter.on("click", function(d, i) {
             var num=$(this).attr("data-id")
             d3.event.stopPropagation();
-            if(d3.event.altKey==true || fakeAlt==true){
+            if(d3.event.altKey==true || fakeAlt==true){ //pulsando tecla lat
                 selected_nodes1=nodes.filter((d1)=>{return d1.status=="clicked"})
                 if(selected_nodes1.length>0){
                     _svg1.selectAll(".arrow2").remove();
@@ -327,7 +327,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
             }
 
             else {
-                if(d3.event.shiftKey==false && fakeShift==false){ //mark all other elements as not selected
+                if(d3.event.shiftKey==false && fakeShift==false){ //mark all other elements as not selected cuando no se pulsa tecla shift
                     _svg1.selectAll(".arrow2").remove();
                     _svg1.selectAll("g.node")
                     .attr( "filter","")
@@ -343,26 +343,39 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     _svg1.selectAll(".arrow-src-"+d.data[0]).remove()
                     d.status="normal"
                     $(this).parent().attr( "filter","")
+                    d3.selectAll(".article.clicked").remove()
                 }
                 else{
                     d.status="clicked"
                     $(this).parent().attr( "filter","url(#sepiatone)")
                     drawArrowFrom(d)
-                }
+
+
+                var num=$(this).attr("data-id")
+                if(dataByPow[d.slug]==undefined) return;
+                dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
+                    if(datarow.slugPow==datarow.slugResponsible)
+                    {
+                        var url=datarow.url
+                        if(url!==undefined && url.length>6){}
+                        else url=""
+                        insertArticle(datarow.Action ,datarow.pow_original, datarow.POW, d.data[1], d.data[1],url, "clicked")
+                    }
+                //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
+                })
+            }
             }
             //$(this).attr("data-status","clicked")
 
         })
         .on("mouseover", function(d, i) {
             var num=$(this).attr("data-id")
-            //add article
-            //TODO estoy metiendo los articulos al hacer mouseover
             if(d.status=="normal"){
                 d.status="mouseover"
                 $(this).attr( "filter","url(#blurFilter2)")
                 d3.select(this.parentNode).selectAll("text").classed("mouseover",true)
             }
-            if(dataByPow[d.slug]==undefined) return;
+        /*    if(dataByPow[d.slug]==undefined) return;
             dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
                 if(datarow.slugPow==datarow.slugResponsible)
                 {
@@ -372,7 +385,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     insertArticle(datarow.Action ,datarow.pow_original, datarow.POW, d.data[1], d.data[1],url, "mouseover")
                 }
             //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
-            })
+            })*/
         })
         .on("mouseout", function(d, i) {
             var num=$(this).attr("data-id")
@@ -383,8 +396,9 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     $(this).attr("data-status","")
                 }
                 d3.select(this.parentNode).selectAll("text").classed("mouseover",false)
+                /*
                 d3.selectAll(".article.mouseover").remove()
-                $("#basetext").show();
+                if(d3.selectAll(".article").size()==0) $("#basetext").show();*/
         })
 
         g_enter.append("text")
@@ -428,7 +442,7 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
         pendiente=(y1-y2)/(x1-x2)
         angulo=Math.atan(pendiente)
         punto_medio=[Math.abs(x1+x2)/2 ,  Math.abs(y1+y2)/2]
-        distancia=(elementNumber*8- (total/2) * 8 )
+        distancia=(elementNumber*4- (total/2) * 4 )
         //distancia=elementNumber*10;
         punto=rotate(punto_medio[0],punto_medio[1],punto_medio[0],punto_medio[1]-distancia,-angulo*57.29577951308232 )
         //return lineGenerator( [ [x1,y1],  [ Math.sin(angulo)*distancia +punto_medio[0] ,  Math.cos(angulo)*distancia + punto_medio[1] ], [x2,y2] ] )
@@ -449,17 +463,6 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
         var num = d3.select(this).attr("data-number");
         datarow=globalData[num]
         insertArticles(datarow.slugPow,datarow.slugResponsible);
-        //d3.select(this).classed("clicked",true)
-    /*    var icon1=nodesBySlug[datarow.slugPow].data[1]
-        //console.log(icon1)
-        var icon2=nodesBySlug[datarow.slugResponsible].data[1]
-        //console.log(icon2)
-        d3.selectAll(".article.clicked").remove()
-        var url=datarow.url
-        if(url!==undefined && url.length>6){}
-        else url=""
-        insertArticle(datarow.Action ,datarow.pow_original, datarow.Responsible, icon1,icon2,url,"clicked")*/
-
     })
     .on("mouseover", function(d, i) {
         //console.log( $(this) )
