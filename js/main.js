@@ -397,8 +397,8 @@ function createCircle(_svg1,radius_w,radius_h,files){
                 }
                 d3.select(this.parentNode).selectAll("text").classed("mouseover",false)
                 /*
-                d3.selectAll(".article.mouseover").remove()
-                if(d3.selectAll(".article").size()==0) $("#basetext").show();*/
+                d3.selectAll(".article.mouseover").remove()*/
+                if(d3.selectAll(".article").size()==0) $("#basetext").show();
         })
 
         g_enter.append("text")
