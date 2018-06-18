@@ -58,6 +58,9 @@ svg text.mouseover {
   width: 10px;
   height: 100%;
 }
+.title_rev {
+  margin-top: 1em;
+}
 .article {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 13px;

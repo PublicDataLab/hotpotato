@@ -322,6 +322,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                         otrosD.status="normal"
                     })
                     d3.selectAll(".article.clicked").remove()
+                    d3.selectAll(".title_rev").remove()
                     drawArrowFromTo(d,selected_nodes1[0])
                 }
             }
@@ -336,6 +337,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                         otrosD.status="normal"
                     })
                     d3.selectAll(".article.clicked").remove()
+                    d3.selectAll(".title_rev").remove()
                 }
 
 
@@ -344,6 +346,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     d.status="normal"
                     $(this).parent().attr( "filter","")
                     d3.selectAll(".article.clicked").remove()
+                    d3.selectAll(".title_rev").remove()
                 }
                 else{
                     d.status="clicked"
@@ -396,7 +399,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     $(this).attr("data-status","")
                 }
                 d3.select(this.parentNode).selectAll("text").classed("mouseover",false)
-                /*
+                /*f
                 d3.selectAll(".article.mouseover").remove()*/
                 if(d3.selectAll(".article").size()==0) $("#basetext").show();
         })
@@ -479,9 +482,15 @@ function canvasInsertArrow(x1,y1,x2,y2,color,src_slug,target_slug,datanumber,ele
 
 function insertArticles(src_slug, target_slug){
     d3.selectAll(".article.clicked").remove()
+    d3.selectAll(".title_rev").remove()
+    var showTitle=false;
     dataByPow[src_slug].forEach(function(datarow){ //recorro todos los
         if(datarow.slugResponsible==target_slug)
         {
+          if(showTitle==false && $('.title_rev').length==0){
+            $('#description').append("<div class='title_rev'>  According to <i>"+ nodesBySlug[src_slug].data[2] +'</i>,<br/> <i> ' +nodesBySlug[target_slug].data[2]   + '</i> is responsible for: </div>')
+            showTitle=true;
+          }
             var icon1=nodesBySlug[src_slug].data[1]
             //console.log(icon1)
             var icon2=nodesBySlug[target_slug].data[1]
@@ -499,7 +508,7 @@ function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
     var html    = template(context);
     aa=$('#description').append(html)
     var hh= $("#description .article ").first().find(".text-container").height()
-    $("#description .article ").first().find(".image-line").css("height",hh+"px")
+    $("#description .article ").last().find(".image-line").css("height",hh+"px")
 
 
 }
