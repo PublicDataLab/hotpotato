@@ -339,8 +339,6 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     d3.selectAll(".article.clicked").remove()
                     d3.selectAll(".title_rev").remove()
                 }
-
-
                 if(d.status=="clicked"){
                     _svg1.selectAll(".arrow-src-"+d.data[0]).remove()
                     d.status="normal"
@@ -349,24 +347,28 @@ function createCircle(_svg1,radius_w,radius_h,files){
                     d3.selectAll(".title_rev").remove()
                 }
                 else{
-                    d.status="clicked"
-                    $(this).parent().attr( "filter","url(#sepiatone)")
-                    drawArrowFrom(d)
+                  d.status="clicked"
+                  $(this).parent().attr( "filter","url(#sepiatone)")
+                  drawArrowFrom(d)
+                  var num=$(this).attr("data-id")
+                  if(dataByPow[d.slug]==undefined) return;
+                  d3.selectAll(".title_rev").remove()
+                  showTitle=true;
+                  if(dataByPow[d.slug].length<0){
+                    $('#description').append("<div class='title_rev'>  According to <i>"+ nodesBySlug[d.slug].data[2] +'</i>,<br/> they are responsible for: </div>')
 
-
-                var num=$(this).attr("data-id")
-                if(dataByPow[d.slug]==undefined) return;
-                dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
-                    if(datarow.slugPow==datarow.slugResponsible)
-                    {
-                        var url=datarow.url
-                        if(url!==undefined && url.length>6){}
-                        else url=""
-                        insertArticle(datarow.Action ,datarow.pow_original, datarow.POW, d.data[1], d.data[1],url, "clicked")
-                    }
-                //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
-                })
-            }
+                  }
+                  dataByPow[d.slug].forEach(function(datarow){ //recorro todos los
+                      if(datarow.slugPow==datarow.slugResponsible)
+                      {
+                          var url=datarow.url
+                          if(url!==undefined && url.length>6){}
+                          else url=""
+                          insertArticle(datarow.Action ,datarow.pow_original, datarow.POW, d.data[1], d.data[1],url, "clicked")
+                      }
+                  //    function canvasInsertArrow(x1,y1,x2,y2,color,id){
+                  })
+              }
             }
             //$(this).attr("data-status","clicked")
 
