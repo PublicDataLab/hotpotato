@@ -19,7 +19,7 @@ function stop(){
 
 function nextSlide(){
     currentSlide++;
-    if(currentSlide>=8) currentSlide=0
+    if(currentSlide>8) currentSlide=0
 
     $(".demo-content").hide();
     $("#demo-content-"+currentSlide).fadeIn();
@@ -68,5 +68,8 @@ function actionsInDemo(){
         d3.select("image#slug-business").dispatch("click")
         d3.select("image#slug-ngo").dispatch("click")
         fakeShift=false
+    }
+    if(currentSlide==8){
+        d3.select("path.arrow-target-devolvedgovernment").dispatch("click")
     }
 }

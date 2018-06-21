@@ -354,7 +354,7 @@ function createCircle(_svg1,radius_w,radius_h,files){
                   if(dataByPow[d.slug]==undefined) return;
                   d3.selectAll(".title_rev").remove()
                   showTitle=true;
-                  if(dataByPow[d.slug].length<0){
+                  if(dataByPow[d.slug].length>0){
                     $('#description').append("<div class='title_rev'>  According to <i>"+ nodesBySlug[d.slug].data[2] +'</i>,<br/> they are responsible for: </div>')
 
                   }
@@ -516,7 +516,6 @@ function insertArticle(text,title1, title2, icon1, icon2, url, extraclass){
 }
 
 function polarToCartesian(centerX, centerY, radiusX, radiusY, angleInDegrees) {
-
         var angleInRadians = (angleInDegrees* Math.PI / 180.0);
         return {
             x: centerX + (radiusX * Math.cos(angleInRadians)),
